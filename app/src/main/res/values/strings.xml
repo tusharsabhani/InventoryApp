@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">InventoryApp</string>
+    
+    <string name="name">Name</string>
+    <string name="prod_name">Product Name</string>
+    
+    <string name="prod_details">Product Details</string>
+    <string name="price">Price</string>
+    <string name="quan">Quantity</string>
+
+    <string name="sup_details">Supplier Details</string>
+    <string name="sup_name">Name</string>
+    <string name="sup_no">Phone Number</string>
+
+    <string name="delete_all">Delete all products</string>
+
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+
+    <string name="editor_activity_title_new_product">Add a product</string>
+</resources>
