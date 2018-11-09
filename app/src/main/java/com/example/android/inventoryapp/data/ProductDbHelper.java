@@ -26,7 +26,7 @@ public class ProductDbHelper extends SQLiteOpenHelper {
                 + ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE + " INTEGER DEFAULT 0, "
                 + ProductContract.ProductEntry.COLUMN_PRODUCT_QUANTITY + " INTEGER DEFAULT 0, "
                 + ProductContract.ProductEntry.COLUMN_PRODUCT_SUP_NAME + " INTEGER NOT NULL,"
-                + ProductContract.ProductEntry.COLUMN_PRODUCT_SUP_NO + "INTEGER DEFAULT 9);";
+                + ProductContract.ProductEntry.COLUMN_PRODUCT_SUP_NO + " INTEGER DEFAULT 9);";
 
         db.execSQL(SQL_CREATE_PRODUCTS_TABLE);
     }
