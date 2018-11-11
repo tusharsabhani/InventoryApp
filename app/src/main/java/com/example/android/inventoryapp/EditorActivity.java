@@ -374,71 +374,81 @@ public class EditorActivity extends AppCompatActivity implements
             mQuanEditText.setText(Integer.toString(quan));
             mSupNameEditText.setText(supName);
             mSupNoEditText.setText(Integer.toString(supNo));
+        }
     }
 
-    private void showUnsavedChangesDialog(
-            DialogInterface.OnClickListener discardButtonClickListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.unsaved_changes_dialog_msg);
-        builder.setPositiveButton(R.string.discard, discardButtonClickListener);
-        builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Keep editing" button, so dismiss the dialog
-                // and continue editing the pet.
-                if (dialog != null) {
-                    dialog.dismiss();
+        private void showUnsavedChangesDialog (
+                DialogInterface.OnClickListener discardButtonClickListener){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.unsaved_changes_dialog_msg);
+            builder.setPositiveButton(R.string.discard, discardButtonClickListener);
+            builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked the "Keep editing" button, so dismiss the dialog
+                    // and continue editing the pet.
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+
+        /*@Override
+        public void onLoaderReset (android.content.Loader < Cursor > loader) {
+            // If the loader is invalidated, clear out all the data from the input fields.
+            mProdNameEditText.setText("");
+            mPriceEditText.setText("");
+            mQuanEditText.setText("");
+            mSupNameEditText.setText("");
+            mSupNoEditText.setText("");
+        }*/
+
+        private void showDeleteConfirmationDialog () {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.delete_dialog_msg);
+            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked the "Delete" button, so delete the pet.
+                    deleteProduct();
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked the "Cancel" button, so dismiss the dialog
+                    // and continue editing the pet.
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            // Create and show the AlertDialog
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+
+        private void deleteProduct () {
+            if (mCurrentProductUri != null) {
+                int rowsDeleted = getContentResolver().delete(mCurrentProductUri, null, null);
+                if (rowsDeleted == 0) {
+                    Toast.makeText(this, getString(R.string.editor_delete_productt_failed),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getString(R.string.editor_delete_productt_successful),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
+            // Close the activity
+            finish();
+        }
 
     @Override
     public void onLoaderReset(android.content.Loader<Cursor> loader) {
-        // If the loader is invalidated, clear out all the data from the input fields.
         mProdNameEditText.setText("");
         mPriceEditText.setText("");
         mQuanEditText.setText("");
         mSupNameEditText.setText("");
         mSupNoEditText.setText("");
-        }
-
-    private void showDeleteConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.delete_dialog_msg);
-        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Delete" button, so delete the pet.
-                deleteProduct();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue editing the pet.
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        // Create and show the AlertDialog
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    private void deleteProduct(){
-        if (mCurrentProductUri!= null) {
-            int rowsDeleted = getContentResolver().delete(mCurrentProductUri, null, null);
-            if (rowsDeleted == 0) {
-                Toast.makeText(this, getString(R.string.editor_delete_productt_failed),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, getString(R.string.editor_delete_productt_successful),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-        // Close the activity
-        finish();
     }
 }
