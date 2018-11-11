@@ -111,6 +111,12 @@
                 android:hint="@string/sup_no"
                 android:inputType="number"
                 style="@style/EditorFieldStyle" />
+
+            <ImageView
+                android:id="@+id/contact_supplier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/phone"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ public class EditorActivity extends AppCompatActivity implements
     private EditText mSupNameEditText;
     private EditText mSupNoEditText;
     Button increaseQuan, decreaseQuan;
+    ImageView call;
 
     private boolean mProductHasChanged = false;
 
@@ -91,9 +93,11 @@ public class EditorActivity extends AppCompatActivity implements
 
         increaseQuan = findViewById(R.id.increase_quantity_button);
         decreaseQuan = findViewById(R.id.decrease_quantity_button);
+        call = findViewById(R.id.contact_supplier);
 
         increaseQuan.setOnClickListener(this);
         decreaseQuan.setOnClickListener(this);
+        call.setOnClickListener(this);
     }
 
     private void saveProductt() {
@@ -184,7 +188,6 @@ public class EditorActivity extends AppCompatActivity implements
                     NavUtils.navigateUpFromSameTask(EditorActivity.this);
                     return true;
                 }
-
                 DialogInterface.OnClickListener discardButtonClickListener =
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -347,6 +350,12 @@ public class EditorActivity extends AppCompatActivity implements
                     mQuanEditText.setText(String.valueOf(quantity - 1));
                 else
                     mQuanEditText.setText("0");
+            case R.id.contact_supplier :
+                String supplier_number = mSupNoEditText.getText().toString().trim();
+                Intent in = new Intent(Intent.ACTION_DIAL);
+                in.setData(Uri.parse("tel:" + supplier_number));
+                if(in.resolveActivity(getPackageManager()) != null)
+                    startActivity(in);
         }
     }
 }
