@@ -18,4 +18,25 @@
     <string name="delete">Delete</string>
 
     <string name="editor_activity_title_new_product">Add a product</string>
+
+    <string name="unknown_quantity">0</string>
+
+    <string name="no_products">No products in the list</string>
+    
+    <string name="editor_activity_title_new_pet">Add a product</string>
+    <string name="editor_activity_title_edit_pet">Edit a product</string>
+
+    <string name="editor_insert_product_failed">Error with updating product</string>
+    <string name="editor_update_product_successful">Product saved</string>
+    
+    <string name="editor_update_product_failed">Error with updating product</string>
+    <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep editing</string>
+
+    <string name="editor_delete_productt_failed">Error with deleting product</string>
+    <string name="editor_delete_productt_successful">Product Deleted</string>
+
+    <string name="delete_dialog_msg">Delete this product?</string>
+    <string name="cancel">Cancel</string>
 </resources>
