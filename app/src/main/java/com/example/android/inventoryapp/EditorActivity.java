@@ -328,6 +328,10 @@ public class EditorActivity extends AppCompatActivity implements
             case R.id.contact_supplier :
                 String supplier_number = mSupNoEditText.getText().toString().trim();
                 Intent in = new Intent(Intent.ACTION_DIAL);
+                if(supplier_number.isEmpty()){
+                    Toast.makeText(this, "Phone number is empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 in.setData(Uri.parse("tel:" + supplier_number));
                 if(in.resolveActivity(getPackageManager()) != null)
                     startActivity(in);
