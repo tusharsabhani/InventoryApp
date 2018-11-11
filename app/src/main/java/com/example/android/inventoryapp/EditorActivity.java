@@ -1,40 +1,26 @@
 package com.example.android.inventoryapp;
 
 import android.app.AlertDialog;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.ProductContract;
-import com.example.android.inventoryapp.data.ProductDbHelper;
-
-import static com.example.android.inventoryapp.data.ProductProvider.LOG_TAG;
-
 
 public class EditorActivity extends AppCompatActivity implements
         android.app.LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
@@ -100,12 +86,20 @@ public class EditorActivity extends AppCompatActivity implements
         call.setOnClickListener(this);
     }
 
-    private void saveProductt() {
+    private void saveProduct() {
         String nameString = mProdNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
         String quanString = mQuanEditText.getText().toString().trim();
         String supNameString = mSupNameEditText.getText().toString().trim();
         String supNoString = mSupNoEditText.getText().toString().trim();
+
+
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString) ||
+                TextUtils.isEmpty(quanString) || TextUtils.isEmpty(supNameString) ||
+                TextUtils.isEmpty(supNoString)) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (mCurrentProductUri == null &&
                 TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
@@ -113,25 +107,14 @@ public class EditorActivity extends AppCompatActivity implements
                 TextUtils.isEmpty(supNoString)) {
             return;
         }
+
+
         ContentValues values = new ContentValues();
         values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME, nameString);
         values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE, priceString);
         values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_QUANTITY, quanString);
         values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_SUP_NAME, supNameString);
         values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_SUP_NO, supNoString);
-
-        int price = 0;
-        if (!TextUtils.isEmpty(priceString)) {
-            price = Integer.parseInt(priceString);
-        }
-        int quan = 0;
-        if (!TextUtils.isEmpty(quanString)) {
-            quan = Integer.parseInt(quanString);
-        }
-        int supNo = 0;
-        if (!TextUtils.isEmpty(supNoString)) {
-            supNo = Integer.parseInt(supNoString);
-        }
 
         if (mCurrentProductUri == null) {
             Uri newUri = getContentResolver().insert(ProductContract.ProductEntry.CONTENT_URI, values);
@@ -142,6 +125,7 @@ public class EditorActivity extends AppCompatActivity implements
             } else {
                 Toast.makeText(this, getString(R.string.editor_update_product_successful),
                         Toast.LENGTH_SHORT).show();
+                finish();
             }
         } else {
             int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
@@ -153,6 +137,7 @@ public class EditorActivity extends AppCompatActivity implements
                 // Otherwise, the update was successful and we can display a toast.
                 Toast.makeText(this, getString(R.string.editor_update_product_successful),
                         Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
@@ -177,8 +162,7 @@ public class EditorActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-                saveProductt();
-                finish();
+                saveProduct();
                 return true;
             case R.id.action_delete:
                 showDeleteConfirmationDialog();
@@ -282,16 +266,6 @@ public class EditorActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-        /*@Override
-        public void onLoaderReset (android.content.Loader < Cursor > loader) {
-            // If the loader is invalidated, clear out all the data from the input fields.
-            mProdNameEditText.setText("");
-            mPriceEditText.setText("");
-            mQuanEditText.setText("");
-            mSupNameEditText.setText("");
-            mSupNoEditText.setText("");
-        }*/
-
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_dialog_msg);
@@ -350,6 +324,7 @@ public class EditorActivity extends AppCompatActivity implements
                     mQuanEditText.setText(String.valueOf(quantity - 1));
                 else
                     mQuanEditText.setText("0");
+                    break;
             case R.id.contact_supplier :
                 String supplier_number = mSupNoEditText.getText().toString().trim();
                 Intent in = new Intent(Intent.ACTION_DIAL);
