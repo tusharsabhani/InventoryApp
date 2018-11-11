@@ -161,6 +161,8 @@ public class MainActivity extends AppCompatActivity implements
 
     ProductCursorAdapter mCursorAdapter;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

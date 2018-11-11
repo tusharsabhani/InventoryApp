@@ -62,6 +62,23 @@
                 android:hint="@string/quan"
                 android:inputType="number"
                 style="@style/EditorFieldStyle" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/increase_quantity_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/addOne" />
+
+                <Button
+                    android:id="@+id/decrease_quantity_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/deleteOne"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

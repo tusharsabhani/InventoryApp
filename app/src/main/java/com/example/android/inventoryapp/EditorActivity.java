@@ -1,6 +1,7 @@
 package com.example.android.inventoryapp;
 
 import android.app.AlertDialog;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -16,12 +17,14 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -29,139 +32,11 @@ import android.widget.Toast;
 import com.example.android.inventoryapp.data.ProductContract;
 import com.example.android.inventoryapp.data.ProductDbHelper;
 
-/*public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final int EXISTING_PRODUCT_LOADER = 0;
-
-    private Uri mCurrentProductUri;
-
-    private EditText mProdNameEditText;
-    private EditText mPriceEditText;
-    private EditText mQuanEditText;
-    private EditText mSupNameEditText;
-    private EditText mSupNoEditText;
-
-    private boolean mProductHasChanged = false;
-
-    private View.OnTouchListener mToushListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            mProductHasChanged = true;
-            return false;
-        }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_editor);
-
-        Intent intent = getIntent();
-        mCurrentProductUri = intent.getData();
-
-        if (mCurrentProductUri == null) {
-            setTitle(getString(R.string.editor_activity_title_new_pet));
-            invalidateOptionsMenu();
-        } else {
-            setTitle(getString(R.string.editor_activity_title_edit_pet));
-            getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER, null, this);
-        }
-
-        mProdNameEditText = findViewById(R.id.edit_name);
-        mPriceEditText = findViewById(R.id.edit_prod_price);
-        mQuanEditText = findViewById(R.id.edit_prod_quan);
-        mSupNameEditText = findViewById(R.id.edit_sup_name);
-        mSupNoEditText = findViewById(R.id.edit_sup_no);
-
-        mProdNameEditText.setOnTouchListener(mToushListener);
-        mPriceEditText.setOnTouchListener(mToushListener);
-        mQuanEditText.setOnTouchListener(mToushListener);
-        mSupNameEditText.setOnTouchListener(mToushListener);
-        mSupNoEditText.setOnTouchListener(mToushListener);
-    }
-
-    private void insertProduct(){
-        String nameString = mProdNameEditText.getText().toString().trim();
-        String priceString = mPriceEditText.getText().toString().trim();
-        int price = Integer.parseInt(priceString);
-        String quanString = mQuanEditText.getText().toString().trim();
-        int quantity = Integer.parseInt(quanString);
-        String supNameString = mSupNameEditText.getText().toString().trim();
-        String supNoString = mSupNoEditText.getText().toString().trim();
-        int supNo = Integer.parseInt(supNoString);
-
-        ProductDbHelper mDbHelper = new ProductDbHelper(this);
-
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME, nameString);
-        values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE, price);
-        values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
-        values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_SUP_NAME, supNameString);
-        values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_SUP_NO,supNo);
-
-        long newRowId = db.insert(ProductContract.ProductEntry.TABLE_NAME, null, values);
-        if (newRowId == -1) {
-            // If the row ID is -1, then there was an error with insertion.
-            Toast.makeText(this, "Error with saving product", Toast.LENGTH_SHORT).show();
-        } else {
-            // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Product saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
-        }
-    }
+import static com.example.android.inventoryapp.data.ProductProvider.LOG_TAG;
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu options from the res/menu/menu_editor.xml file.
-        // This adds menu items to the app bar.
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // User clicked on a menu option in the app bar overflow menu
-        switch (item.getItemId()) {
-            // Respond to a click on the "Save" menu option
-            case R.id.action_save:
-                // Save pet to database
-                insertProduct();
-                //Exit activity
-                finish();
-                return true;
-            // Respond to a click on the "Delete" menu option
-            case R.id.action_delete:
-                // Do nothing for now
-                return true;
-            // Respond to a click on the "Up" arrow button in the app bar
-            case android.R.id.home:
-                // Navigate back to parent activity (MainActivity)
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, @Nullable Bundle bundle) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
-
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-
-    }
-}*/
 public class EditorActivity extends AppCompatActivity implements
-        android.app.LoaderManager.LoaderCallbacks<Cursor> {
+        android.app.LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     private static final int EXISTING_PRODUCT_LOADER = 0;
 
@@ -172,6 +47,7 @@ public class EditorActivity extends AppCompatActivity implements
     private EditText mQuanEditText;
     private EditText mSupNameEditText;
     private EditText mSupNoEditText;
+    Button increaseQuan, decreaseQuan;
 
     private boolean mProductHasChanged = false;
 
@@ -210,6 +86,14 @@ public class EditorActivity extends AppCompatActivity implements
         mQuanEditText.setOnTouchListener(mToushListener);
         mSupNameEditText.setOnTouchListener(mToushListener);
         mSupNoEditText.setOnTouchListener(mToushListener);
+
+        mQuanEditText.setText("0");
+
+        increaseQuan = findViewById(R.id.increase_quantity_button);
+        decreaseQuan = findViewById(R.id.decrease_quantity_button);
+
+        increaseQuan.setOnClickListener(this);
+        decreaseQuan.setOnClickListener(this);
     }
 
     private void saveProductt() {
@@ -377,23 +261,23 @@ public class EditorActivity extends AppCompatActivity implements
         }
     }
 
-        private void showUnsavedChangesDialog (
-                DialogInterface.OnClickListener discardButtonClickListener){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.unsaved_changes_dialog_msg);
-            builder.setPositiveButton(R.string.discard, discardButtonClickListener);
-            builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User clicked the "Keep editing" button, so dismiss the dialog
-                    // and continue editing the pet.
-                    if (dialog != null) {
-                        dialog.dismiss();
-                    }
+    private void showUnsavedChangesDialog(
+            DialogInterface.OnClickListener discardButtonClickListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.unsaved_changes_dialog_msg);
+        builder.setPositiveButton(R.string.discard, discardButtonClickListener);
+        builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Keep editing" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
                 }
-            });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
         /*@Override
         public void onLoaderReset (android.content.Loader < Cursor > loader) {
@@ -405,43 +289,43 @@ public class EditorActivity extends AppCompatActivity implements
             mSupNoEditText.setText("");
         }*/
 
-        private void showDeleteConfirmationDialog () {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.delete_dialog_msg);
-            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User clicked the "Delete" button, so delete the pet.
-                    deleteProduct();
-                }
-            });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User clicked the "Cancel" button, so dismiss the dialog
-                    // and continue editing the pet.
-                    if (dialog != null) {
-                        dialog.dismiss();
-                    }
-                }
-            });
-            // Create and show the AlertDialog
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
-
-        private void deleteProduct () {
-            if (mCurrentProductUri != null) {
-                int rowsDeleted = getContentResolver().delete(mCurrentProductUri, null, null);
-                if (rowsDeleted == 0) {
-                    Toast.makeText(this, getString(R.string.editor_delete_productt_failed),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, getString(R.string.editor_delete_productt_successful),
-                            Toast.LENGTH_SHORT).show();
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deleteProduct();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
                 }
             }
-            // Close the activity
-            finish();
+        });
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void deleteProduct() {
+        if (mCurrentProductUri != null) {
+            int rowsDeleted = getContentResolver().delete(mCurrentProductUri, null, null);
+            if (rowsDeleted == 0) {
+                Toast.makeText(this, getString(R.string.editor_delete_productt_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.editor_delete_productt_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
+        // Close the activity
+        finish();
+    }
 
     @Override
     public void onLoaderReset(android.content.Loader<Cursor> loader) {
@@ -450,5 +334,19 @@ public class EditorActivity extends AppCompatActivity implements
         mQuanEditText.setText("");
         mSupNameEditText.setText("");
         mSupNoEditText.setText("");
+    }
+
+    public void onClick(View v) {
+        int quantity = Integer.valueOf(mQuanEditText.getText().toString().trim());
+        switch (v.getId()) {
+            case R.id.increase_quantity_button:
+                mQuanEditText.setText(String.valueOf(quantity + 1));
+                break;
+            case R.id.decrease_quantity_button:
+                if (quantity > 0)
+                    mQuanEditText.setText(String.valueOf(quantity - 1));
+                else
+                    mQuanEditText.setText("0");
+        }
     }
 }
